@@ -7,7 +7,7 @@ class IntroduceSymbolsUnitSpec extends Specification {
     "match the correct implementation and check it at compile time" in {
       IntroduceSymbols.introduceTestOneArg((firstArg: String) =>
         (x: String) => firstArg + x + "hi"
-      )("haha!") must_== "testhaha!hi"
+      )("/some/path/haha!") must_== "some/some/path/haha!hi"
     }
   }
 }

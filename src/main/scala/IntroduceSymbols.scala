@@ -8,7 +8,13 @@ object IntroduceSymbols {
         f: c.Expr[String => String => String]
     ): c.Expr[String => String] = {
       import c.universe._
-      c.Expr(q"""$f("test")""")
+      val positions = reify{Seq(1)}
+      c.Expr(
+        q"""((b: String) => {
+              val splitted = b.split("/")
+              val values = $positions map (position => splitted(position))
+              $f(values(0))(b)
+            })""")
     }
 
     def introduceTestTwoArgs(
