@@ -13,12 +13,11 @@ object IntroduceSymbols {
         f: c.Expr[T => String => String]
     ): c.Expr[String => String] = {
       import c.universe._
-      val positions = reify{Seq(1)}
+      val positions = reify { Seq(1) }
 
       val T = c.weakTypeOf[T]
 
-      c.Expr[String => String](
-        q"""((b: String) => {
+      c.Expr[String => String](q"""((b: String) => {
               val splitted = b.split("/")
               val values = $positions map (position => splitted(position))
               val arg1 = implicitly[macros.IntroduceSymbols.Parser[$T]].parse(values(0))

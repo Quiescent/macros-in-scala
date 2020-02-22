@@ -17,7 +17,7 @@ class IntroduceSymbolsUnitSpec extends Specification {
     }
 
     "match the correct implementation and check it at compile time given an Int argument" in {
-      implicit val intParse = new IntroduceSymbols.Parser[Int] {
+      implicit val intParser = new IntroduceSymbols.Parser[Int] {
         override def parse(x: String): Int = Integer.parseInt(x)
       }
 
@@ -37,7 +37,9 @@ class IntroduceSymbolsUnitSpec extends Specification {
         (x: String) => firstArg.toString + x + "hi"
       )
 
-      endPoint("/derp/path/haha!") must throwA[NumberFormatException](message = """For input string: "derp"""")
+      endPoint("/derp/path/haha!") must throwA[NumberFormatException](message =
+        """For input string: "derp""""
+      )
     }
   }
 }
