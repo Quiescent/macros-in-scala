@@ -4,8 +4,10 @@ import org.specs2.mutable.Specification
 
 class IntroduceSymbolsUnitSpec extends Specification {
   "IntroduceSymbols" should {
-    "create a symbol in a simple function" in {
-      IntroduceSymbols.introduceTest((x: String) => x + "hi")("test ") must_== "test hi"
+    "match the correct implementation and check it at compile time" in {
+      IntroduceSymbols.introduceTestOneArg((firstArg: String) =>
+        (x: String) => firstArg + x + "hi"
+      )("haha!") must_== "testhaha!hi"
     }
   }
 }
