@@ -3,17 +3,26 @@ package macros
 import scala.reflect.macros.blackbox.Context
 
 object IntroduceSymbols {
+  trait Parser[T] {
+    def parse(x: String): T
+  }
+
   class Impl(val c: Context) {
-    def introduceTestOneArg(
-        f: c.Expr[String => String => String]
+    @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
+    def introduceTestOneArg[T: c.WeakTypeTag](
+        f: c.Expr[T => String => String]
     ): c.Expr[String => String] = {
       import c.universe._
       val positions = reify{Seq(1)}
-      c.Expr(
+
+      val T = c.weakTypeOf[T]
+
+      c.Expr[String => String](
         q"""((b: String) => {
               val splitted = b.split("/")
               val values = $positions map (position => splitted(position))
-              $f(values(0))(b)
+              val arg1 = implicitly[macros.IntroduceSymbols.Parser[$T]].parse(values(0))
+              $f(arg1)(b)
             })""")
     }
 
@@ -33,8 +42,8 @@ object IntroduceSymbols {
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.Null"))
-  def introduceTestOneArg(f: String => String => String): String => String =
-    macro Impl.introduceTestOneArg
+  def introduceTestOneArg[T](f: T => String => String): String => String =
+    macro Impl.introduceTestOneArg[T]
 
   @SuppressWarnings(Array("org.wartremover.warts.Null"))
   def introduceTestTwoArgs(
